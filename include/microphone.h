@@ -2,7 +2,7 @@
 #pragma once
 #include <driver/i2s.h>
 
-// INMP441 microphone
+// // INMP441 microphone
 constexpr int I2S_SD = 16;
 constexpr int I2S_SCK = 17;
 constexpr int I2S_WS = 18;
