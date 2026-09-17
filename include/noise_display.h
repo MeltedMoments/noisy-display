@@ -20,6 +20,6 @@ constexpr double HYSTERESIS = 3.0;
 
 extern Adafruit_NeoPixel strip;
 
-void setup_neopixel();
+void setup_noise_display();
 void show_noise_level(double raw_intensity);  
 

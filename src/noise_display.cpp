@@ -3,15 +3,6 @@
 // #include "config.h"
 #include "noise_display.h"
 
-// // Neopixel stick
-// constexpr int PIXEL_PIN = 4;
-// constexpr int PIXEL_COUNT = 8;
-// constexpr double MIN_DB = 55.0;
-// constexpr double MAX_DB = 85.0;
-// constexpr int DIVISOR = (MAX_DB - MIN_DB) / PIXEL_COUNT;
-// constexpr double RISE_FACTOR = 0.85;
-// constexpr double FALL_FACTOR = 0.3;
-// constexpr double HYSTERESIS = 3.0;
 
 Adafruit_NeoPixel strip(
     PIXEL_COUNT,
@@ -26,25 +17,14 @@ const uint32_t colours[] = {
     YELLOW, RED, RED, RED,    
 };
 
-// unsigned long last_report_time = 0;
-// unsigned long last_sensor_time = 0;
 unsigned int current_level = 0;
 
-void setup_neopixel() {
+void setup_noise_display() {
     strip.begin();
     strip.setBrightness(20);
     strip.clear();
     strip.show();
 }
-
-// void setup() {
-//     Serial.begin(115200);
-//     // delay(10000);
-//     Serial.println("INMP441 Microphone Neopixel test");
-
-//     setup_microphone();
-//     setup_neopixel();
-// }
 
 void show_pixels(int pixels) {
     strip.clear();
