@@ -1,0 +1,6 @@
+.pio/
+.vscode/
+.DS_Store
+
+# Don't track wokwi.toml as it is generated
+wokwi.toml
