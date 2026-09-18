@@ -90,9 +90,7 @@ double measure_sound_level() {
         square_total += sample * sample;
     }
     double rms = sqrt(square_total / samples_read);
-    // (crudely) convert the rms to dB 
-    double db = 20.0 * log10(rms);
-    // and db full scale value
+    // convert the RMS to db full scale value
     double dbfs = 20.0 * log10(rms / FULL_SCALE);
     // convert to Sound Pressure Level (SPL) using 94 dB SPL  →  -26 dBFS  
     double db_spl = dbfs + 120.0;
