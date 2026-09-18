@@ -1,7 +1,7 @@
 // noise_display.cpp
 
 #include <Arduino.h>
-#include "config.h"
+#include "noisy_config.h"
 #include "noise_display.h"
 #include "noise_level.h"
 

@@ -19,7 +19,6 @@ int calc_noise_level(double raw_intensity, int current_level, int max_levels) {
 
     level = std::max(0, level);
     level = std::min(max_levels, level);
-    
+
     return level;
 }
-

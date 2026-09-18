@@ -1,6 +1,5 @@
-// config.h
+// noisy_config.h
 #pragma once
-// #include <driver/i2s.h>
 
 // Neopixel stick
 constexpr int PIXEL_PIN = 4;

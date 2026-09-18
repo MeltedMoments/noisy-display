@@ -8,4 +8,4 @@ constexpr double MAX_DB = 85.0;
 // constexpr double FALL_FACTOR = 0.3;
 constexpr double HYSTERESIS = 3.0;
 
-int calc_noise_level(double intensity, int current_level, int max_levels);
+int calc_noise_level(double raw_intensity, int current_level, int max_levels);

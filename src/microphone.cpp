@@ -4,7 +4,7 @@
 #include <driver/i2s.h>
 
 #include "microphone.h"
-#include "config.h"
+#include "noisy_config.h"
 
 int32_t samples[SAMPLE_COUNT];
 
