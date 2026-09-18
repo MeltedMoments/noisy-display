@@ -282,7 +282,15 @@ dB SPL = decibels Sound Pressure Level
 - right, Herman's fiddling around with the breadboard, what am I doing today?
 - start looking at the persistent noise problem
 
-    
+### eod
+- setting up first set of unit tests to test the signal processing part
+- working well
+
+### next time
+- continue messing around with hysteresis
+- move main test code into assert_xxx()
+- and continue
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

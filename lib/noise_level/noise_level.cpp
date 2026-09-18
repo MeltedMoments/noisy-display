@@ -8,7 +8,7 @@ int calc_noise_level(double raw_intensity, int current_level, int max_levels) {
 
     int level = current_level;
     double bounded = raw_intensity - MIN_DB;
-    int divisor = (MAX_DB - MIN_DB) / max_levels;
+    double divisor = (MAX_DB - MIN_DB) / max_levels;
 
     double lower_threshold = current_level * divisor - HYSTERESIS;
     double upper_threshold = (current_level + 1) * divisor + HYSTERESIS;
