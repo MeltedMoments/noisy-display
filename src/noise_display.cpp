@@ -1,6 +1,8 @@
 // noise_display.cpp
 
 // #include "config.h"
+#include <Arduino.h>
+
 #include "noise_display.h"
 
 
@@ -34,7 +36,9 @@ void show_pixels(int pixels) {
     strip.show();
 }
 
-void show_noise_level(double raw_intensity) {      
+int calc_noise_level(double raw_intensity, int current_level) {      
+    // raw_intensity = std::max(MIN_DB, raw_intensity);
+    // raw_intensity = std::min(MAX_DB, raw_intensity);
     if (raw_intensity < MIN_DB) {
         raw_intensity = MIN_DB;
     }
@@ -62,7 +66,13 @@ void show_noise_level(double raw_intensity) {
     } else if (level > PIXEL_COUNT) {
         level = PIXEL_COUNT;
     } 
-    current_level = level;
-    show_pixels(level);
+    return level;
+    // current_level = level;
+    // show_pixels(level);
 }
 
+void show_noise_level(double intensity) {      
+    int new_level = calc_noise_level(intensity, current_level);
+    current_level = new_level;
+    show_pixels(current_level);
+}
