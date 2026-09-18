@@ -1,10 +1,9 @@
 // noise_display.cpp
 
-// #include "config.h"
 #include <Arduino.h>
-
+#include "config.h"
 #include "noise_display.h"
-
+#include "noise_level.h"
 
 Adafruit_NeoPixel strip(
     PIXEL_COUNT,
@@ -23,7 +22,7 @@ unsigned int current_level = 0;
 
 void setup_noise_display() {
     strip.begin();
-    strip.setBrightness(20);
+    strip.setBrightness(INIT_BRIGHTNESS);
     strip.clear();
     strip.show();
 }
@@ -36,43 +35,13 @@ void show_pixels(int pixels) {
     strip.show();
 }
 
-int calc_noise_level(double raw_intensity, int current_level) {      
-    // raw_intensity = std::max(MIN_DB, raw_intensity);
-    // raw_intensity = std::min(MAX_DB, raw_intensity);
-    if (raw_intensity < MIN_DB) {
-        raw_intensity = MIN_DB;
-    }
-    if (raw_intensity > MAX_DB) {
-        raw_intensity = MAX_DB;
-    }
-
-    int level = current_level;
-    double intensity = raw_intensity - MIN_DB;
-    double lower_threshold = current_level * DIVISOR - HYSTERESIS;
-    double upper_threshold = (current_level + 1) * DIVISOR + HYSTERESIS;
-    double threshold = current_level * DIVISOR;   
-    if (   (intensity < lower_threshold) 
-        || (intensity > upper_threshold)) {
-            level = intensity / DIVISOR;   
-    }
-
+void show_noise_level(double intensity) {      
+    int new_level = calc_noise_level(intensity, current_level, PIXEL_COUNT);
+    current_level = new_level;
     Serial.printf(
         " Level current: %d new: %d\r\n", 
         current_level,
-        level
+        new_level
     );
-    if (level < 0) {
-        level = 0;
-    } else if (level > PIXEL_COUNT) {
-        level = PIXEL_COUNT;
-    } 
-    return level;
-    // current_level = level;
-    // show_pixels(level);
-}
-
-void show_noise_level(double intensity) {      
-    int new_level = calc_noise_level(intensity, current_level);
-    current_level = new_level;
     show_pixels(current_level);
 }

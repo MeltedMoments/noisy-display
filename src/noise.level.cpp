@@ -1,0 +1,25 @@
+// noise_level.cpp
+#include <algorithm>
+#include "noise_level.h"
+
+int calc_noise_level(double raw_intensity, int current_level, int max_levels) {      
+    raw_intensity = std::max(MIN_DB, raw_intensity);
+    raw_intensity = std::min(MAX_DB, raw_intensity);
+
+    int level = current_level;
+    double bounded = raw_intensity - MIN_DB;
+    int divisor = (MAX_DB - MIN_DB) / max_levels;
+
+    double lower_threshold = current_level * divisor - HYSTERESIS;
+    double upper_threshold = (current_level + 1) * divisor + HYSTERESIS;
+    if (   (bounded < lower_threshold) 
+        || (bounded > upper_threshold)) {
+            level = bounded / divisor;   
+    }
+
+    level = std::max(0, level);
+    level = std::min(max_levels, level);
+    
+    return level;
+}
+
