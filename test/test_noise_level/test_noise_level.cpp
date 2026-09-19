@@ -11,7 +11,7 @@ struct NoiseLevelTestCase {
     int expected_level;
 };
 
-struct RiseLevelTestCase {
+struct SwingLevelTestCase {
     int current;
     int target;
     int expected;
@@ -39,12 +39,7 @@ void assert_noise_level(const NoiseLevelTestCase &test_case) {
     );
 }
 
-void assert_rise_limit(const RiseLevelTestCase &test_case) {
-    int actual = apply_rise_limit(
-        test_case.current,
-        test_case.target
-    );
-
+void assert_swing_limit(const SwingLevelTestCase &test_case, int actual) {
     char message[100];
     snprintf(
         message,
@@ -60,6 +55,37 @@ void assert_rise_limit(const RiseLevelTestCase &test_case) {
     );
 }
 
+void assert_rise_limit(const SwingLevelTestCase &test_case) {
+    int actual = apply_rise_limit(
+        test_case.current,
+        test_case.target
+    );
+
+    assert_swing_limit(test_case, actual);
+}
+
+void assert_fall_limit(const SwingLevelTestCase &test_case) {
+    int actual = apply_fall_limit(
+        test_case.current,
+        test_case.target
+    );
+    assert_swing_limit(test_case, actual);
+
+    // char message[100];
+    // snprintf(
+    //     message,
+    //     sizeof(message),
+    //     "current: %d target: %d",
+    //     test_case.current,
+    //     test_case.target
+    // );
+    // TEST_ASSERT_EQUAL_INT_MESSAGE(
+    //     test_case.expected, 
+    //     actual,
+    //     message
+    // );
+}
+
 template <size_t N>
 void assert_noise_level_matrix(const NoiseLevelTestCase (&cases)[N]) {
     for (const auto &test_case : cases) {
@@ -68,9 +94,16 @@ void assert_noise_level_matrix(const NoiseLevelTestCase (&cases)[N]) {
 }
 
 template <size_t N>
-void assert_rise_limit_matrix(const RiseLevelTestCase (&cases)[N]) {
+void assert_rise_limit_matrix(const SwingLevelTestCase (&cases)[N]) {
     for (const auto &test_case : cases) {
         assert_rise_limit(test_case);
+    }
+}
+
+template <size_t N>
+void assert_fall_limit_matrix(const SwingLevelTestCase (&cases)[N]) {
+    for (const auto &test_case : cases) {
+        assert_fall_limit(test_case);
     }
 }
 
@@ -129,7 +162,7 @@ void test_hysteresis_matrix() {
 }
 
 void test_rise_limit_matrix() {
-    RiseLevelTestCase cases[] = {
+    SwingLevelTestCase cases[] = {
         {0, 0, 0},             // unchanged            
         {2, 2, 2},             // unchanged            
         {2, 3, 3},             // rise one             
@@ -141,6 +174,21 @@ void test_rise_limit_matrix() {
         {8, 0, 0},             // fall to minimum      
     };
     assert_rise_limit_matrix(cases);
+}
+
+void test_fall_limit_matrix() {
+    SwingLevelTestCase cases[] = {
+        {0, 0, 0},             // unchanged            
+        {3, 3, 3},             // unchanged            
+        {3, 2, 2},             // fall one             
+        {3, 1, 2},             // fall limited         
+        {8, 1, 7},             // large spike limited  
+        {1, 0, 0},             // fall to minimum      
+        {5, 6, 6},             // rise one             
+        {5, 2, 4},             // large fall immediate 
+        {8, 0, 7},             // fall to minimum              
+    };
+    assert_fall_limit_matrix(cases);
 }
 
 void test_single_loud_spike_does_not_max() {
@@ -176,6 +224,7 @@ int main() {
     RUN_TEST(test_first_implementation);
     RUN_TEST(test_hysteresis_matrix);
     RUN_TEST(test_rise_limit_matrix);
+    RUN_TEST(test_fall_limit_matrix);
     RUN_TEST(test_single_loud_spike_does_not_max);
     RUN_TEST(test_sustained_loud_spike_maxes);
 

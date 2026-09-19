@@ -38,8 +38,9 @@ void show_pixels(int pixels) {
 void show_noise_level(double intensity) {      
     int target_level = calc_noise_level(intensity, current_level, PIXEL_COUNT);
     int new_level = apply_rise_limit(current_level, target_level);
+    new_level = apply_fall_limit(current_level, target_level);
     Serial.printf(
-        " Level current: %d target: %d new: %d\r\n", 
+        " Level current: %d target: %d display: %d\r\n", 
         current_level,
         target_level,
         new_level

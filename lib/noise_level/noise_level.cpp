@@ -31,3 +31,12 @@ int apply_rise_limit(int current_level, int target_level) {
     }
     return target_level;
 }
+
+// Limits the next level to N above the current
+int apply_fall_limit(int current_level, int target_level) {
+    int limit = current_level - 1;
+    if (target_level < limit ) {
+        return limit;
+    }
+    return target_level;
+}
