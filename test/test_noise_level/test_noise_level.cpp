@@ -56,12 +56,6 @@ void test_basic_matrix() {
 
     for (const auto &test_case : cases) {
         assert_noise_level(test_case);
-        // int actual = calc_noise_level(
-        //     test_case.intensity,
-        //     test_case.current_level,
-        //     MAX_LEVELS
-        // );
-        // TEST_ASSERT_EQUAL_INT(test_case.expected_level, actual);
     }
 }
 
@@ -81,12 +75,6 @@ void test_first_implementation() {
 
     for (const auto &test_case : cases) {
         assert_noise_level(test_case);
-        // int actual = calc_noise_level(
-        //     test_case.intensity,
-        //     test_case.current_level,
-        //     MAX_LEVELS
-        // );
-        // TEST_ASSERT_EQUAL_INT(test_case.expected_level, actual);
     }
 }
 
@@ -107,25 +95,6 @@ void test_hysteresis_matrix() {
 
     for (const auto &test_case : cases) {
         assert_noise_level(test_case);
-        // int actual = calc_noise_level(
-        //     test_case.intensity,
-        //     test_case.current_level,
-        //     MAX_LEVELS
-        // );
-
-        // char message[100];
-        // snprintf(
-        //     message,
-        //     sizeof(message),
-        //     "intensity=%.2f current=%d",
-        //     test_case.intensity,
-        //     test_case.current_level
-        // );
-        // TEST_ASSERT_EQUAL_INT_MESSAGE(
-        //     test_case.expected_level, 
-        //     actual,
-        //     message
-        // );
     }
 }
 
