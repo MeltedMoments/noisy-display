@@ -297,6 +297,21 @@ dB SPL = decibels Sound Pressure Level
 - figure out the boundaries yourself, set up a few more tests
 - continue
 
+### notes
+- oled 
+```
+OLED signal   ESP32-S3       Purpose        (wire)
+---------------------------------------------
+VCC           3V3            power          red
+GND           GND            ground         blue
+DIN           GPIO 11        SPI MOSI/data  orange
+CLK           GPIO 12        SPI clock      green
+CS            GPIO 10        chip select    grey 
+DC            GPIO 9         data/command   yellow
+RST           GPIO 8         reset          purple
+```
+
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
