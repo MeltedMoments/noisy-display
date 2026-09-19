@@ -33,6 +33,13 @@ void assert_noise_level(const NoiseLevelTestCase &test_case) {
     );
 }
 
+template <size_t N>
+void assert_noise_level_matrix(const NoiseLevelTestCase (&cases)[N]) {
+    for (const auto &test_case : cases) {
+        assert_noise_level(test_case);
+    }
+}
+
 void test_level_below_minimum_is_zero() {
     int level = calc_noise_level(MIN_DB - 15.0, 0, MAX_LEVELS);
     TEST_ASSERT_EQUAL_INT(0, level);
@@ -54,9 +61,10 @@ void test_basic_matrix() {
         // {64, 0, 3},
     };
 
-    for (const auto &test_case : cases) {
-        assert_noise_level(test_case);
-    }
+    assert_noise_level_matrix(cases);
+    // for (const auto &test_case : cases) {
+    //     assert_noise_level(test_case);
+    // }
 }
 
 void test_first_implementation() {
@@ -72,10 +80,11 @@ void test_first_implementation() {
         {MIN_DB + divisor,       0, 0},
         {MIN_DB + divisor + 0.5, 0, 0},
     };
+    assert_noise_level_matrix(cases);
 
-    for (const auto &test_case : cases) {
-        assert_noise_level(test_case);
-    }
+    // for (const auto &test_case : cases) {
+    //     assert_noise_level(test_case);
+    // }
 }
 
 void test_hysteresis_matrix() {
@@ -92,10 +101,11 @@ void test_hysteresis_matrix() {
         {69.3, 2, 3},  // above threshold: rise        
         // {68, 2, 4}
     };
+    assert_noise_level_matrix(cases);
 
-    for (const auto &test_case : cases) {
-        assert_noise_level(test_case);
-    }
+    // for (const auto &test_case : cases) {
+    //     assert_noise_level(test_case);
+    // }
 }
 
 int main() {
