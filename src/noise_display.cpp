@@ -18,7 +18,7 @@ const uint32_t colours[] = {
     YELLOW, RED, RED, RED,    
 };
 
-unsigned int current_level = 0;
+uint8_t current_level = 0;
 
 void setup_noise_display() {
     strip.begin();
@@ -27,7 +27,7 @@ void setup_noise_display() {
     strip.show();
 }
 
-void show_pixels(int pixels) {
+void show_noise_level(int pixels) {
     strip.clear();
     for (int i=0; i < pixels; i++) {
         strip.setPixelColor(i, colours[i]);
@@ -35,16 +35,16 @@ void show_pixels(int pixels) {
     strip.show();
 }
 
-void show_noise_level(double intensity) {      
-    int target_level = calc_noise_level(intensity, current_level, PIXEL_COUNT);
-    int new_level = apply_rise_limit(current_level, target_level);
-    new_level = apply_fall_limit(current_level, target_level);
-    Serial.printf(
-        " Level current: %d target: %d display: %d\r\n", 
-        current_level,
-        target_level,
-        new_level
-    );
-    current_level = new_level;
-    show_pixels(current_level);
-}
+// void show_noise_level(double intensity) {      
+//     int target_level = calc_noise_level(intensity, current_level, PIXEL_COUNT);
+//     int new_level = apply_rise_limit(current_level, target_level);
+//     new_level = apply_fall_limit(current_level, target_level);
+//     Serial.printf(
+//         " Level current: %d target: %d display: %d\r\n", 
+//         current_level,
+//         target_level,
+//         new_level
+//     );
+//     current_level = new_level;
+//     show_pixels(current_level);
+// }

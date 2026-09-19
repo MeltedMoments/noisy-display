@@ -56,7 +56,7 @@ void assert_swing_limit(const SwingLevelTestCase &test_case, int actual) {
 }
 
 void assert_rise_limit(const SwingLevelTestCase &test_case) {
-    int actual = apply_rise_limit(
+    int actual = apply_rate_limit(
         test_case.current,
         test_case.target
     );
@@ -65,7 +65,7 @@ void assert_rise_limit(const SwingLevelTestCase &test_case) {
 }
 
 void assert_fall_limit(const SwingLevelTestCase &test_case) {
-    int actual = apply_fall_limit(
+    int actual = apply_rate_limit(
         test_case.current,
         test_case.target
     );
@@ -169,9 +169,6 @@ void test_rise_limit_matrix() {
         {2, 4, 3},             // rise limited         
         {2, 8, 3},             // large spike limited  
         {7, 8, 8},             // rise to maximum      
-        {5, 4, 4},             // fall one             
-        {5, 2, 2},             // large fall immediate 
-        {8, 0, 0},             // fall to minimum      
     };
     assert_rise_limit_matrix(cases);
 }
@@ -193,25 +190,25 @@ void test_fall_limit_matrix() {
 
 void test_single_loud_spike_does_not_max() {
     int level = 1;
-    level = apply_rise_limit(level, 1);   // quiet
-    level = apply_rise_limit(level, 1);   // quiet
-    level = apply_rise_limit(level, 8);   // bang!
+    level = apply_rate_limit(level, 1);   // quiet
+    level = apply_rate_limit(level, 1);   // quiet
+    level = apply_rate_limit(level, 8);   // bang!
 
     TEST_ASSERT_EQUAL_INT(2, level);
     
-    level = apply_rise_limit(level, 1);   // quiet
+    level = apply_rate_limit(level, 1);   // quiet
     TEST_ASSERT_EQUAL_INT(1, level);
 }
 
 void test_sustained_loud_spike_maxes() {
     int level = 1;
-    level = apply_rise_limit(level, 8);   // bang!
+    level = apply_rate_limit(level, 8);   // bang!
     TEST_ASSERT_EQUAL_INT(2, level);
-    level = apply_rise_limit(level, 8);   // bang!
+    level = apply_rate_limit(level, 8);   // bang!
     TEST_ASSERT_EQUAL_INT(3, level);
-    level = apply_rise_limit(level, 8);   // bang!
+    level = apply_rate_limit(level, 8);   // bang!
     TEST_ASSERT_EQUAL_INT(4, level);
-    level = apply_rise_limit(level, 8);   // bang!
+    level = apply_rate_limit(level, 8);   // bang!
     TEST_ASSERT_EQUAL_INT(5, level);
 }
 

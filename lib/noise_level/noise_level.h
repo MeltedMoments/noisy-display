@@ -10,6 +10,5 @@ constexpr double HYSTERESIS = 3.0;
 constexpr int RISE_LIMIT = 1;
 constexpr int FALL_LIMIT = 1;
 
-int calc_noise_level(double raw_intensity, int current_level, int max_levels);
-int apply_rise_limit(int current_level, int target_level);
-int apply_fall_limit(int current_level, int target_level);
+int calc_noise_level(double raw_intensity, int display_level, int max_levels);
+int apply_rate_limit(int display_level, int target_level);
