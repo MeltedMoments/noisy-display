@@ -63,7 +63,7 @@ void show_debug_heartbeat(bool heartbeat_on) {
 void show_debug_info(double estimated_db, int target_level, int display_level) {
     display.clearDisplay();
     display.setTextColor(SH110X_WHITE);
-    // Temperature
+    // dBs
     display.setTextSize(1);
     display.setCursor(0, 0);
     display.println("Estimated");
@@ -71,15 +71,24 @@ void show_debug_info(double estimated_db, int target_level, int display_level) {
     display.setCursor(0, 14);
     display.print(estimated_db, 1);
     display.println(" dB");
+
+    // Levels
+    display.setTextSize(1);
+    display.setCursor(0, 38);
+    display.println("Target");
+    display.setTextSize(2);
+    display.setCursor(0, 50);
+    display.print(target_level, 1);
+
+    display.setTextSize(1);
+    display.setCursor(64, 38);
+    display.println("Display");
+    display.setTextSize(2);
+    display.setCursor(64, 50);
+    display.print(display_level);
+    display.display();
+    // display.println("%");
 }
-//     // Humidity
-//     display.setTextSize(1);
-//     display.setCursor(0, 38);
-//     display.println("Humidity");
-//     display.setTextSize(2);
-//     display.setCursor(0, 50);
-//     display.print(humidity, 1);
-//     display.println("%");
     
 //     // Comfort
 //     float comfort = comfort_score(temperature, humidity);
