@@ -95,11 +95,5 @@ double measure_sound_level() {
     // convert to Sound Pressure Level (SPL) using 94 dB SPL  →  -26 dBFS  
     double db_spl = dbfs + 120.0;
 
-    Serial.printf(
-        "RMS: %.0f dBFS: %.1f estimated SPL: %.1f dB ",
-        rms,
-        dbfs, 
-        db_spl
-    );
     return db_spl;
 }
