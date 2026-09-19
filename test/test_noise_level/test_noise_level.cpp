@@ -60,11 +60,7 @@ void test_basic_matrix() {
         // {56, 0, 0},
         // {64, 0, 3},
     };
-
     assert_noise_level_matrix(cases);
-    // for (const auto &test_case : cases) {
-    //     assert_noise_level(test_case);
-    // }
 }
 
 void test_first_implementation() {
@@ -73,18 +69,13 @@ void test_first_implementation() {
     NoiseLevelTestCase cases[] = {
         {MIN_DB + divisor + 1.0, 0, 0},     // not sufficiently above level-0 hysteresis       
         {MIN_DB + divisor + 2.0, 0, 0},     // exactly upper hysteresis threshold
-        {MIN_DB + divisor + 3.0, 0, 0},     // finally leaves 0 — and skips 1
-        {MIN_DB + (3*divisor)  , 0, 3},     // jumps directly upwards        
-
+        {MIN_DB + divisor + 4.0, 0, 2},     // leaves 0 — and skips 1
+        {MIN_DB + (3*divisor),   0, 3},     // jumps directly upwards        
         {MIN_DB + divisor - 0.1, 0, 0},
         {MIN_DB + divisor,       0, 0},
         {MIN_DB + divisor + 0.5, 0, 0},
     };
     assert_noise_level_matrix(cases);
-
-    // for (const auto &test_case : cases) {
-    //     assert_noise_level(test_case);
-    // }
 }
 
 void test_hysteresis_matrix() {
@@ -99,13 +90,8 @@ void test_hysteresis_matrix() {
         {69.2, 2, 2},  // below threshold: hold
         {69.25, 2, 2}, // exactly threshold: hold
         {69.3, 2, 3},  // above threshold: rise        
-        // {68, 2, 4}
     };
     assert_noise_level_matrix(cases);
-
-    // for (const auto &test_case : cases) {
-    //     assert_noise_level(test_case);
-    // }
 }
 
 int main() {
