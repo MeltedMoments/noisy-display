@@ -291,6 +291,12 @@ dB SPL = decibels Sound Pressure Level
 - move main test code into assert_xxx()
 - and continue
 
+## 20260919
+- nice got a whole day to fool around
+- move code around
+- figure out the boundaries yourself, set up a few more tests
+- continue
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

@@ -11,6 +11,12 @@ struct NoiseLevelTestCase {
     int expected_level;
 };
 
+struct RiseLevelTestCase {
+    int current;
+    int target;
+    int expected;
+};
+
 void assert_noise_level(const NoiseLevelTestCase &test_case) {
     int actual = calc_noise_level(
         test_case.intensity,
@@ -33,10 +39,38 @@ void assert_noise_level(const NoiseLevelTestCase &test_case) {
     );
 }
 
+void assert_rise_limit(const RiseLevelTestCase &test_case) {
+    int actual = apply_rise_limit(
+        test_case.current,
+        test_case.target
+    );
+
+    char message[100];
+    snprintf(
+        message,
+        sizeof(message),
+        "current: %d target: %d",
+        test_case.current,
+        test_case.target
+    );
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        test_case.expected, 
+        actual,
+        message
+    );
+}
+
 template <size_t N>
 void assert_noise_level_matrix(const NoiseLevelTestCase (&cases)[N]) {
     for (const auto &test_case : cases) {
         assert_noise_level(test_case);
+    }
+}
+
+template <size_t N>
+void assert_rise_limit_matrix(const RiseLevelTestCase (&cases)[N]) {
+    for (const auto &test_case : cases) {
+        assert_rise_limit(test_case);
     }
 }
 
@@ -94,6 +128,21 @@ void test_hysteresis_matrix() {
     assert_noise_level_matrix(cases);
 }
 
+void test_rise_limit_matrix() {
+    RiseLevelTestCase cases[] = {
+        {0, 0, 0},             // unchanged            
+        {2, 2, 2},             // unchanged            
+        {2, 3, 3},             // rise one             
+        {2, 4, 3},             // rise limited         
+        {2, 8, 3},             // large spike limited  
+        {7, 8, 8},             // rise to maximum      
+        {5, 4, 4},             // fall one             
+        {5, 2, 2},             // large fall immediate 
+        {8, 0, 0},             // fall to minimum      
+    };
+    assert_rise_limit_matrix(cases);
+}
+
 int main() {
     UNITY_BEGIN();
 
@@ -102,6 +151,7 @@ int main() {
     RUN_TEST(test_basic_matrix);
     RUN_TEST(test_first_implementation);
     RUN_TEST(test_hysteresis_matrix);
+    RUN_TEST(test_rise_limit_matrix);
 
     return UNITY_END();
 }
