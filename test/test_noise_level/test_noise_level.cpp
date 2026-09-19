@@ -143,6 +143,30 @@ void test_rise_limit_matrix() {
     assert_rise_limit_matrix(cases);
 }
 
+void test_single_loud_spike_does_not_max() {
+    int level = 1;
+    level = apply_rise_limit(level, 1);   // quiet
+    level = apply_rise_limit(level, 1);   // quiet
+    level = apply_rise_limit(level, 8);   // bang!
+
+    TEST_ASSERT_EQUAL_INT(2, level);
+    
+    level = apply_rise_limit(level, 1);   // quiet
+    TEST_ASSERT_EQUAL_INT(1, level);
+}
+
+void test_sustained_loud_spike_maxes() {
+    int level = 1;
+    level = apply_rise_limit(level, 8);   // bang!
+    TEST_ASSERT_EQUAL_INT(2, level);
+    level = apply_rise_limit(level, 8);   // bang!
+    TEST_ASSERT_EQUAL_INT(3, level);
+    level = apply_rise_limit(level, 8);   // bang!
+    TEST_ASSERT_EQUAL_INT(4, level);
+    level = apply_rise_limit(level, 8);   // bang!
+    TEST_ASSERT_EQUAL_INT(5, level);
+}
+
 int main() {
     UNITY_BEGIN();
 
@@ -152,6 +176,8 @@ int main() {
     RUN_TEST(test_first_implementation);
     RUN_TEST(test_hysteresis_matrix);
     RUN_TEST(test_rise_limit_matrix);
+    RUN_TEST(test_single_loud_spike_does_not_max);
+    RUN_TEST(test_sustained_loud_spike_maxes);
 
     return UNITY_END();
 }
