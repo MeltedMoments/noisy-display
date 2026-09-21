@@ -380,6 +380,9 @@ HIGH sensitivity      55 ───────── 80
 - so a few hours to fool around. 
 - try get the button working? 
 
+### notes
+- ah, okay, debouncing works well, but the microphone is hogging the cycles.
+- so need to read in smaller chunks, and process only when the array is full
 
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

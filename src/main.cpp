@@ -36,13 +36,15 @@ void loop() {
         Serial.println("Button pressed!");
     }
 
-    double estimated_db = measure_sound_level();
+    double estimated_db;
+    if (update_sound_measurement(estimated_db)) {
 
-    target_level = calc_noise_level(estimated_db, target_level, PIXEL_COUNT);
-    display_level = apply_rate_limit(display_level, target_level);
-    show_noise_level(display_level);
+        target_level = calc_noise_level(estimated_db, target_level, PIXEL_COUNT);
+        display_level = apply_rate_limit(display_level, target_level);
+        show_noise_level(display_level);
 
-    show_debug_info(estimated_db, target_level, display_level);
+        show_debug_info(estimated_db, target_level, display_level);
+    }
 }
 
     // Serial.printf(

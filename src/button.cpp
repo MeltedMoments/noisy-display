@@ -23,9 +23,8 @@ bool button_pressed() {
     if (raw_state != last_raw_button_state) {
         last_change_time = now;
         last_raw_button_state = raw_state;
-        // return true;
     }
-    // return false;
+
     // Apply debouncing
     if (now - last_change_time >= DEBOUNCE_MS) {
         if (raw_state != stable_button_state) {
