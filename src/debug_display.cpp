@@ -63,9 +63,10 @@ void show_debug_heartbeat(bool heartbeat_on) {
     display.display();
 }
 
-void show_debug_info(double estimated_db, int target_level, int display_level) {
+void show_debug_info(double estimated_db, int target_level, int display_level, const char* sensitivity) {
     display.clearDisplay();
     display.setTextColor(SH110X_WHITE);
+
     // dBs
     display.setTextSize(1);
     display.setCursor(0, 0);
@@ -75,21 +76,35 @@ void show_debug_info(double estimated_db, int target_level, int display_level) {
     display.print(estimated_db, 1);
     display.println(" dB");
 
-    // Levels
+    int col_label = 0;
+    int col_value = 76;
+
+    // Sensitivity
+    int row = 34;
     display.setTextSize(1);
-    display.setCursor(0, 38);
+    display.setCursor(col_label, row);
+    display.println("Sensitivity");
+    // display.setTextSize(2);
+    display.setCursor(col_value, row);
+    display.print(sensitivity);
+
+    // Levels
+    row += 10;
+    display.setTextSize(1);
+    display.setCursor(col_label, row);
     display.println("Target");
-    display.setTextSize(2);
-    display.setCursor(0, 50);
+    // display.setTextSize(2);
+    display.setCursor(col_value, row);
     display.print(target_level, 1);
 
+    row += 10;
     display.setTextSize(1);
-    display.setCursor(64, 38);
+    display.setCursor(col_label, row);
     display.println("Display");
-    display.setTextSize(2);
-    display.setCursor(64, 50);
+    // display.setTextSize(2);
+    display.setCursor(col_value, row);
     display.print(display_level);
+
     display.display();
-    // display.println("%");
 }
 

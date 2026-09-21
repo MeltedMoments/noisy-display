@@ -8,10 +8,12 @@
 #include "noise_level.h"
 #include "heartbeat.h"
 #include "button.h"
+#include "sensitivity.h"
 #include "debug_display.h"
 
 uint8_t target_level = 0;
 uint8_t display_level = 0;
+Sensitivity sensitivity = Sensitivity::MEDIUM_LEVEL;
 
 void setup() {
     Serial.begin(115200);
@@ -33,7 +35,8 @@ void loop() {
     heartbeat();
 
     if (button_pressed()) {
-        Serial.println("Button pressed!");
+        sensitivity = next_sensitivity(sensitivity);
+        Serial.printf("Sensitivity: %s\n", sensitivity_name(sensitivity));
     }
 
     double estimated_db;
@@ -43,7 +46,12 @@ void loop() {
         display_level = apply_rate_limit(display_level, target_level);
         show_noise_level(display_level);
 
-        show_debug_info(estimated_db, target_level, display_level);
+        show_debug_info(
+            estimated_db, 
+            target_level, 
+            display_level, 
+            sensitivity_name(sensitivity)
+        );
     }
 }
 

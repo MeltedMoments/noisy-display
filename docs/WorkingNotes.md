@@ -384,6 +384,17 @@ HIGH sensitivity      55 ───────── 80
 - ah, okay, debouncing works well, but the microphone is hogging the cycles.
 - so need to read in smaller chunks, and process only when the array is full
 
+### eod 
+- okay, chunked buffer is working and now the button press is very reactive
+- sensitivy enum is set up
+- key1 is hooked up and clicking it cycles through the sensitivites (and displays it as well)
+- had to fiddle witht eh display, but have also parameterised it a bit, so it makes it easier to change
+- next part is deciding what the values mean and how to implement it
+
+### next time
+- implement sensitivity ranges
+
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

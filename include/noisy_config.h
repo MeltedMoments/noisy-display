@@ -20,4 +20,4 @@ constexpr int OLED_RST  = 8;        // reset
 constexpr int OLED_KEY1 = 14;       // KEY1
   
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 1000;
-constexpr unsigned long DEBOUNCE_MS = 10;
+constexpr unsigned long DEBOUNCE_MS = 30;

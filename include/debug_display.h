@@ -12,7 +12,7 @@ constexpr int OLED_HEARTBEAT_COL = 115;
 void setup_debug_display();
 // void show_oled_climate(float temperature, float humidity);
 void show_debug_heartbeat(bool heartbeat_on);
-void show_debug_info(double estimated_db, int target_level, int display_level);
+void show_debug_info(double estimated_db, int target_level, int display_level, const char* sensitivity);
 
 const unsigned char heart_8x8[] PROGMEM = {
     0b01100110,
