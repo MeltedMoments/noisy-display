@@ -7,6 +7,9 @@
 #include "debug_display.h"
 #include "noisy_config.h"
 
+unsigned long last_button_time = 0;
+bool last_key_state = HIGH;
+
 Adafruit_SH1107 display(
     OLED_WIDTH,
     OLED_HEIGHT,
@@ -89,15 +92,4 @@ void show_debug_info(double estimated_db, int target_level, int display_level) {
     display.display();
     // display.println("%");
 }
-    
-//     // Comfort
-//     float comfort = comfort_score(temperature, humidity);
-//     display.setTextSize(1);
-//     display.setCursor(70, 38);
-//     display.println("Comfort ");
-//     display.setTextSize(2);
-//     display.setCursor(70, 50);
-//     display.println(comfort_text(comfort));
-    
-//     display.display();
-// }
+

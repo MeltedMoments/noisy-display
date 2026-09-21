@@ -310,6 +310,75 @@ CS            GPIO 10        chip select    grey
 DC            GPIO 9         data/command   yellow
 RST           GPIO 8         reset          purple
 ```
+## 20260920
+- No coding today, but we did a street ('field') test last night:
+    - Hacked together a baffle box from the spongy part of a couple of dishwasher sponges. Seem to work fairly well
+    - It was pretty noisy last night.
+    - Subjectively the lights seem to react well to the diff sounds. And the levels more or less corresponded to our subjective feelings.
+    - The lights are now [greenx2 amberx3 redx3].
+    - min-db: 55 max-db: 85
+
+ - One thing we noticed is that it very rarely fell much below 4 lights (2 amber). Which is prob correct, as it was noisy. But it led us to thinking that a way to dial in some 'sensitivity' may be useful. 
+
+ - Best implementation is prob to use the oled KEY0 button to cycle through "sensitivities": low, medium, high, [chat noisydisp 1230]. eg define them as
+
+```
+LOW sensitivity       65 ───────── 90
+MED sensitivity       60 ───────── 85
+HIGH sensitivity      55 ───────── 80
+                      0             8 lights
+```
+
+- Alternatively: "There is another possibility worth keeping in mind: perhaps you don’t actually want three sensitivities. You might instead want one configurable baseline—“below this level, don’t light much”—while leaving the upper/red threshold fixed. That may correspond more closely to the real question: when does ordinary background street noise become noise worth drawing attention to? Your next couple of street tests can tell us which interpretation feels useful."
+
+- Successful test!
+
+### notes
+- ah well managed to squeeze a bit it. 
+- connected KEY1 of the oled to the esp
+    - ha but don't use gpio 19 or 20 as they are the built-in usb pins
+- reading the button is the same as the small experiment that I did to read the onboard button (see chat 20260910 1830). There's nothing special about it being on the oled. 
+- next time implement
+    - reading the button
+    - debouncing the input (properly using 2 vars)
+    ```
+    int raw_state = digitalRead(BOOT_BUTTON_PIN);
+
+    if (raw_state != last_raw_button_state) {
+        last_change_time = now;
+        last_raw_button_state = raw_state;
+    }
+
+    if (now - last_change_time >= DEBOUNCE_MS) {
+
+        if (raw_state != stable_button_state) {
+            stable_button_state = raw_state;
+
+            if (stable_button_state == LOW) {
+                colour_index = (colour_index + 1) % 3;
+                show_colour();
+            }
+        }
+    }    
+    ```    
+
+### eod
+- button connected and being read
+    - without debouncing the button seems to react quicker
+    - with debouncing it sometimes seems to miss it, or you have to press and hold 
+    - but it works!
+
+### next time
+- figure out whether debouncing is useful or not, or figure out how to tune it
+- then implement sensitity, cycling and display on the oled
+
+- but make beads first and do some of the other stuff
+
+## 20260921
+- beads made. house-howto started
+- oh, go do a bit of shopping
+- so a few hours to fool around. 
+- try get the button working? 
 
 
 # ===> I AM HERE MARKER HERE AM I <===

@@ -17,5 +17,7 @@ constexpr int OLED_CLK  = 12;       // SPI clock
 constexpr int OLED_CS   = 10;       // chip select
 constexpr int OLED_DC   = 9;        // data/command
 constexpr int OLED_RST  = 8;        // reset
-
+constexpr int OLED_KEY1 = 14;       // KEY1
+  
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 1000;
+constexpr unsigned long DEBOUNCE_MS = 10;
