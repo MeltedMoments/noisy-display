@@ -3,8 +3,8 @@
 #include <driver/i2s.h>
 
 constexpr i2s_port_t I2S_PORT = I2S_NUM_0;
-constexpr int SAMPLE_COUNT = 4096;
-constexpr int CHUNK_SIZE = 64;
+constexpr size_t SAMPLE_COUNT = 4096;
+constexpr size_t CHUNK_SIZE = 64;
 
 constexpr double FULL_SCALE = 33554432.0;  // 2^25    
 

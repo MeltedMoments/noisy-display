@@ -1,6 +1,6 @@
 // microphone.cpp
 
-// #include <iterator>
+#include <algorithm>
 #include <Arduino.h>
 #include <driver/i2s.h>
 
@@ -56,63 +56,31 @@ void setup_microphone()
     Serial.println("I2S microphone configured");
 }
 
-// double measure_sound_level() {
-//     size_t bytes_read = 0;
-//     esp_err_t result = i2s_read(
-//         I2S_PORT,
-//         samples,
-//         sizeof(samples),
-//         &bytes_read,
-//         portMAX_DELAY
-//     );
+bool read_chunk() {
+    // calculate space left in buffer
+    size_t remaining = SAMPLE_COUNT - samples_collected;
+    size_t requested = std::min(CHUNK_SIZE, remaining);
 
-size_t read_chunk() {
     size_t bytes_read = 0;
     esp_err_t result = i2s_read(
         I2S_PORT,
         samples + samples_collected,
-        CHUNK_SIZE * (sizeof(int32_t)),
+        requested * (sizeof(int32_t)),
         &bytes_read,
         portMAX_DELAY
     );
 
     if (result != ESP_OK) {
         Serial.printf("i2s_read failed: %d\r\n", result);
-        return 0.0;
+        return false;
     }
 
     int chunk_samples_read = bytes_read / sizeof(int32_t);
     samples_collected += chunk_samples_read;
-    return samples_collected;// == sizeof(samples);
+
+    return true;
 }
 
-// double measure_sound_level() {
-//     size_t samples_read = read_chunk();
-//     if (samples_read < sizeof(samples)) {
-//         // buffer not yet full
-//         Serial.printf("Read %d samples\r\n", samples_read);
-//         return;
-//     }
-//     Serial.printf("Full buffer: %d samples\r\n", sizeof(samples));
-    // size_t bytes_read = 0;
-    // esp_err_t result = i2s_read(
-    //     I2S_PORT,
-    //     samples + samples_collected,
-    //     CHUNK_SIZE * (sizeof(int32_t)),
-    //     &bytes_read,
-    //     portMAX_DELAY
-    // );
-
-    // if (result != ESP_OK) {
-    //     Serial.printf("i2s_read failed: %d\r\n", result);
-    //     return 0.0;
-    // }
-
-    // int chunk_samples_read = bytes_read / sizeof(int32_t);
-    // samples_collected += chunk_samples_read;
-
-    // int samples_read = samples / sizeof(int32_t);
-    // just retain the meaningful bits
 double calculate_sound_level() {
     for (int i = 0; i < samples_collected; i++) {
         samples[i] >>= 6;
@@ -142,16 +110,19 @@ double calculate_sound_level() {
 }
 
 bool update_sound_measurement(double &sound_level) {
-    // size_t samples_read = read_chunk();
-    read_chunk();
-    // if (samples_collected < std::size(samples)) {
-    if (samples_collected < SAMPLE_COUNT) {
-        // buffer not yet full
-        Serial.printf("Read %u samples\r\n", samples_collected);
+    if (! read_chunk()) {
+        // Read failed
         return false;
     }
-    Serial.printf("Full buffer: %u samples\r\n", SAMPLE_COUNT);
+
+    // Return if buffer not yet full
+    if (samples_collected < SAMPLE_COUNT) {
+        return false;
+    }
+
+    // Full buffer, process it
     sound_level = calculate_sound_level();
     samples_collected = 0;          // and start again
+
     return true;
 }
