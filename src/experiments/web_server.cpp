@@ -1,6 +1,7 @@
 // web_server.cpp
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WebServer.h>
 #include "wifi_secrets.h"
@@ -44,14 +45,27 @@ void handle_uptime() {
 
 void handle_status() {
     Serial.println("GET /api/status");
-    String json = "{";
-    json += "\"uptime\":";
-    json += millis();
-    json += ",";
-    json += "\"message\":\"Hello from ESP32\"";
-    json += "}";
+    JsonDocument doc;
+    doc["uptime"] = millis();
+    doc["db"] = "67.7";
+    doc["target"] = 4;
+    doc["display"] = 3;
+    doc["sensitivity"] = "HIGH";
+    String json;
+    serializeJson(doc, json);
     server.send(200, "application/json", json);
 }
+
+// void handle_status() {
+//     Serial.println("GET /api/status");
+//     String json = "{";
+//     json += "\"uptime\":";
+//     json += millis();
+//     json += ",";
+//     json += "\"message\":\"Hello from ESP32\"";
+//     json += "}";
+//     server.send(200, "application/json", json);
+// }
 
 void setup_wifi() {
     // Delete old configuration

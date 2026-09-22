@@ -408,9 +408,14 @@ HIGH sensitivity      55 ───────── 80
     - wifi_events: wifi connection using wifi events
     - web_server: tiny web-server, serving root (/) and /uptime
 
+- sends json response (application/json) instead of text/plain
+    - first manually assembled
+    - then using JsonDocument (need lib_deps = bblanchon/ArduinoJson )
+- served at /api/status
+
 ### next time
-- send json response (application/json) instead of text/plain
-- serve at /api/status
+- if enough time (should be) try to add web-server to noisy-display
+
 
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
