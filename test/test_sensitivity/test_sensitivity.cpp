@@ -4,23 +4,25 @@
 #include <unity.h>
 #include "sensitivity.h"
 
-// constexpr int MAX_LEVELS = 8;
-
-// struct NoiseLevelTestCase {
-//     double intensity;
-//     int current_level;
-//     int expected_level;
-// };
-void test_next_sensitivity_cycles_from_max_to_low() {
-
-    int level = calc_noise_level(MIN_DB - 15.0, 0, MAX_LEVELS);
-    TEST_ASSERT_EQUAL_INT(0, level);
+void test_next_sensitivity_cycles_through_all_levels() {
+    Sensitivity start = Sensitivity::LOW_LEVEL;
+    
+    Sensitivity sensitivity = start;
+    
+    sensitivity = next_sensitivity(sensitivity);
+    TEST_ASSERT_EQUAL(Sensitivity::MEDIUM_LEVEL, sensitivity);
+    sensitivity = next_sensitivity(sensitivity);
+    TEST_ASSERT_EQUAL(Sensitivity::HIGH_LEVEL, sensitivity);
+    
+    // Should cycle back to the beginning
+    sensitivity = next_sensitivity(sensitivity);
+    TEST_ASSERT_EQUAL(start, sensitivity);
 }
 
 int main() {
     UNITY_BEGIN();
 
-    RUN_TEST(test_level_below_minimum_is_zero);
+    RUN_TEST(test_next_sensitivity_cycles_through_all_levels);
 
     return UNITY_END();
 }
