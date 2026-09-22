@@ -2,5 +2,7 @@
 .vscode/
 .DS_Store
 
+wifi_secrets.h
+
 # Don't track wokwi.toml as it is generated
 wokwi.toml
