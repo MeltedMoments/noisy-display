@@ -400,7 +400,17 @@ HIGH sensitivity      55 ───────── 80
 - Need to setup TravelCat. That will prob take a few days (esp email client)
 - so today, try the sensitivity implementation which changes the lower bound. 
 
-===> order glass TODAY
+### eod
+- sensitivity is implemented. Turned out to be fairly simple. Now waiting for more field tests
+- decided to dabble around with wifi in noisy-display/src/experiments
+    - wifi_test: basic wifi connection
+    - wifi_scanner: scan for all wifi networks
+    - wifi_events: wifi connection using wifi events
+    - web_server: tiny web-server, serving root (/) and /uptime
+
+### next time
+- send json response (application/json) instead of text/plain
+- serve at /api/status
 
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

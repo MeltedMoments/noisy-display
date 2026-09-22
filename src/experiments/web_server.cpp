@@ -39,10 +39,18 @@ void handle_root() {
 
 void handle_uptime() {
     Serial.println("GET /uptime");
-    char uptime[20];
-    sprintf(uptime, "Uptime: %ul\n", millis());
-    // snprintf("%u", millis())
-    server.send(200, "text/plain", uptime);
+    server.send(200, "text/plain", String(millis()));
+}
+
+void handle_status() {
+    Serial.println("GET /api/status");
+    String json = "{";
+    json += "\"uptime\":";
+    json += millis();
+    json += ",";
+    json += "\"message\":\"Hello from ESP32\"";
+    json += "}";
+    server.send(200, "application/json", json);
 }
 
 void setup_wifi() {
@@ -60,6 +68,7 @@ void setup_wifi() {
 void setup_server() {
     server.on("/", handle_root);
     server.on("/uptime", handle_uptime);
+    server.on("/api/status", handle_status);
     server.begin();
     Serial.println("Web server started");
 }
