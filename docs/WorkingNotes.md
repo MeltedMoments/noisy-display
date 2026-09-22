@@ -395,6 +395,13 @@ HIGH sensitivity      55 ───────── 80
 - implement sensitivity ranges
 
 
+## 20260922
+- slowly should be turning my mind to other things. 
+- Need to setup TravelCat. That will prob take a few days (esp email client)
+- so today, try the sensitivity implementation which changes the lower bound. 
+
+===> order glass TODAY
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
