@@ -1,11 +1,13 @@
-// wifi_events.cpp
+// web_server.cpp
 
 #include <Arduino.h>
 #include <WiFi.h>
+#include <WebServer.h>
 #include "wifi_secrets.h"
 #include "heartbeat.h"
 
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 2000;
+WebServer server(80);
 
 void begin_wifi() {
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -30,6 +32,19 @@ void wifi_disconnected(WiFiEvent_t event, WiFiEventInfo_t info){
     begin_wifi();
 }
 
+void handle_root() {
+    Serial.println("GET /");
+    server.send(200, "text/plain", "Hello from ESP32");
+}
+
+void handle_uptime() {
+    Serial.println("GET /uptime");
+    char uptime[20];
+    sprintf(uptime, "Uptime: %ul\n", millis());
+    // snprintf("%u", millis())
+    server.send(200, "text/plain", uptime);
+}
+
 void setup_wifi() {
     // Delete old configuration
     WiFi.disconnect(true);
@@ -42,10 +57,18 @@ void setup_wifi() {
     begin_wifi();
 }
 
+void setup_server() {
+    server.on("/", handle_root);
+    server.on("/uptime", handle_uptime);
+    server.begin();
+    Serial.println("Web server started");
+}
+
 void setup() {
     Serial.begin(115200);
     setup_heartbeat();
     setup_wifi();
+    setup_server();
 }
 
 void heartbeat() {
@@ -54,7 +77,7 @@ void heartbeat() {
     }
 }
 
-
 void loop() {
     heartbeat();
+    server.handleClient();
 }
