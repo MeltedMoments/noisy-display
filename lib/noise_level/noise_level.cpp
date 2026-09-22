@@ -1,6 +1,7 @@
 // noise_level.cpp
 #include <algorithm>
 #include "noise_level.h"
+#include "sensitivity.h"
 
 int calc_noise_level(double raw_intensity, int current_level, int max_levels) {      
     raw_intensity = std::max(MIN_DB, raw_intensity);
@@ -56,4 +57,17 @@ int apply_fall_limit(int current_level, int target_level) {
         return limit;
     }
     return target_level;
+}
+
+double minimum_db(Sensitivity sensitivity) {
+    switch (sensitivity) {
+        case Sensitivity::LOW_LEVEL:
+            return MIN_DB_LOW_LEVEL;
+        case Sensitivity::MEDIUM_LEVEL:
+            return MIN_DB_MEDIUM_LEVEL;
+        case Sensitivity::HIGH_LEVEL:
+            return MIN_DB_HIGH_LEVEL;
+    }
+    // Fallback
+    return MIN_DB_MEDIUM_LEVEL;
 }

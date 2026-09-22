@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unity.h>
 #include "noise_level.h"
+#include "sensitivity.h"
 
 constexpr int MAX_LEVELS = 8;
 
@@ -212,6 +213,27 @@ void test_sustained_loud_spike_maxes() {
     TEST_ASSERT_EQUAL_INT(5, level);
 }
 
+void test_minimum_db() {
+    Sensitivity sensitivity = Sensitivity::LOW_LEVEL;
+    
+    double start_db = minimum_db(sensitivity);
+    double min_db = start_db;
+    TEST_ASSERT_EQUAL(MIN_DB_LOW_LEVEL, min_db);
+    
+    sensitivity = next_sensitivity(sensitivity);
+    min_db = minimum_db(sensitivity);
+    TEST_ASSERT_EQUAL(MIN_DB_MEDIUM_LEVEL, min_db);
+    
+    sensitivity = next_sensitivity(sensitivity);
+    min_db = minimum_db(sensitivity);
+    TEST_ASSERT_EQUAL(MIN_DB_HIGH_LEVEL, min_db);
+    
+    // Should cycle back to the beginning
+    sensitivity = next_sensitivity(sensitivity);
+    min_db = minimum_db(sensitivity);
+    TEST_ASSERT_EQUAL(start_db, min_db);
+}
+
 int main() {
     UNITY_BEGIN();
 
@@ -224,6 +246,7 @@ int main() {
     RUN_TEST(test_fall_limit_matrix);
     RUN_TEST(test_single_loud_spike_does_not_max);
     RUN_TEST(test_sustained_loud_spike_maxes);
+    RUN_TEST(test_minimum_db);
 
     return UNITY_END();
 }
