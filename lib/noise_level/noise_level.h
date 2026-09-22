@@ -18,6 +18,6 @@ constexpr double HYSTERESIS = 3.0;
 constexpr int RISE_LIMIT = 1;
 constexpr int FALL_LIMIT = 1;
 
-int calc_noise_level(double raw_intensity, int display_level, int max_levels);
+int calc_noise_level(double raw_intensity, int display_level, int max_levels, double min_db);
 int apply_rate_limit(int display_level, int target_level);
 double minimum_db(Sensitivity sensitivity);

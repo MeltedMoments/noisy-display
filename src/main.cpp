@@ -41,8 +41,8 @@ void loop() {
 
     double estimated_db;
     if (update_sound_measurement(estimated_db)) {
-
-        target_level = calc_noise_level(estimated_db, target_level, PIXEL_COUNT);
+        double min_db = minimum_db(sensitivity);
+        target_level = calc_noise_level(estimated_db, target_level, PIXEL_COUNT, min_db);
         display_level = apply_rate_limit(display_level, target_level);
         show_noise_level(display_level);
 

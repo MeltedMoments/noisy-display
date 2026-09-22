@@ -3,13 +3,19 @@
 #include "noise_level.h"
 #include "sensitivity.h"
 
-int calc_noise_level(double raw_intensity, int current_level, int max_levels) {      
-    raw_intensity = std::max(MIN_DB, raw_intensity);
+int calc_noise_level(
+    double raw_intensity,
+    int current_level, 
+    int max_levels,
+    double min_db
+) {      
+    // double min_db = minimum_db(sensitivity);
+    raw_intensity = std::max(min_db, raw_intensity);
     raw_intensity = std::min(MAX_DB, raw_intensity);
 
     int level = current_level;
-    double bounded = raw_intensity - MIN_DB;
-    double divisor = (MAX_DB - MIN_DB) / max_levels;
+    double bounded = raw_intensity - min_db;
+    double divisor = (MAX_DB - min_db) / max_levels;
 
     double lower_threshold = current_level * divisor - HYSTERESIS;
     double upper_threshold = (current_level + 1) * divisor + HYSTERESIS;
@@ -23,6 +29,27 @@ int calc_noise_level(double raw_intensity, int current_level, int max_levels) {
 
     return level;
 }
+
+// int calc_noise_level(double raw_intensity, int current_level, int max_levels) {      
+//     raw_intensity = std::max(MIN_DB, raw_intensity);
+//     raw_intensity = std::min(MAX_DB, raw_intensity);
+
+//     int level = current_level;
+//     double bounded = raw_intensity - MIN_DB;
+//     double divisor = (MAX_DB - MIN_DB) / max_levels;
+
+//     double lower_threshold = current_level * divisor - HYSTERESIS;
+//     double upper_threshold = (current_level + 1) * divisor + HYSTERESIS;
+//     if (   (bounded < lower_threshold) 
+//         || (bounded > upper_threshold)) {
+//             level = bounded / divisor;   
+//     }
+
+//     level = std::max(0, level);
+//     level = std::min(max_levels, level);
+
+//     return level;
+// }
 
 int apply_rate_limit(int current_level, int target_level) {
     // int limit = apply_rise_limit(current_level, target_level);
