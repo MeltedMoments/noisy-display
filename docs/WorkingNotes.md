@@ -415,6 +415,14 @@ HIGH sensitivity      55 ───────── 80
 
 ### next time
 - if enough time (should be) try to add web-server to noisy-display
+- hmm, ordered extra esp. Prob set that up instead (for wokwi etc too)
+
+## 20260924
+- few hours to fool around. still waiting on 2nd esp.
+- do a few more wifi experiments
+    - send back dynamic data
+    - fool around with hotspot on/off
+    - accept http input eg GET /api/hello?name=Jennie. Return {"message":"Hello Jennie"}
 
 
 # ===> I AM HERE MARKER HERE AM I <===
