@@ -46,15 +46,31 @@ void handle_uptime() {
 void handle_status() {
     Serial.println("GET /api/status");
     JsonDocument doc;
-    doc["uptime"] = millis();
-    doc["db"] = "67.7";
-    doc["target"] = 4;
-    doc["display"] = 3;
-    doc["sensitivity"] = "HIGH";
+    doc["uptime_ms"] = millis();
+    doc["wifi_connected"] = WiFi.isConnected();
+    doc["rssi"] = WiFi.RSSI();
+    doc["ip"] = WiFi.localIP().toString(); 
+    doc["auto_reconnect"] = WiFi.getAutoReconnect();
+
     String json;
     serializeJson(doc, json);
+
     server.send(200, "application/json", json);
 }
+
+
+// void handle_status() {
+//     Serial.println("GET /api/status");
+//     JsonDocument doc;
+//     doc["uptime"] = millis();
+//     doc["db"] = "67.7";
+//     doc["target"] = 4;
+//     doc["display"] = 3;
+//     doc["sensitivity"] = "HIGH";
+//     String json;
+//     serializeJson(doc, json);
+//     server.send(200, "application/json", json);
+// }
 
 // void handle_status() {
 //     Serial.println("GET /api/status");
