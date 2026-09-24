@@ -58,6 +58,26 @@ void handle_status() {
     server.send(200, "application/json", json);
 }
 
+void handle_hello() {
+    Serial.println("GET /api/hello");
+    String name_arg = "name";
+    String name = "stranger";
+    if (server.hasArg(name_arg)) {
+        name = server.arg(name_arg);
+    }
+
+    JsonDocument doc;
+    doc["uptime_ms"] = millis();
+    String message = "Hello ";
+    message += name;
+    doc["message"] = message;
+
+    String json;
+    serializeJson(doc, json);
+
+    server.send(200, "application/json", json);
+}
+
 
 // void handle_status() {
 //     Serial.println("GET /api/status");
@@ -99,6 +119,7 @@ void setup_server() {
     server.on("/", handle_root);
     server.on("/uptime", handle_uptime);
     server.on("/api/status", handle_status);
+    server.on("/api/hello", handle_hello);
     server.begin();
     Serial.println("Web server started");
 }
