@@ -31,6 +31,10 @@ cat > wokwi.toml <<EOF
 version = 1
 firmware = "$FIRMWARE"
 elf = "$ELF"
+
+[[net.forward]]
+from = "localhost:8180"
+to = "target:80"
 EOF
 
 echo

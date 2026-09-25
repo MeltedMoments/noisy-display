@@ -3,6 +3,7 @@
 .DS_Store
 
 wifi_secrets.h
+wifi_config.h
 
 # Don't track wokwi.toml as it is generated
 wokwi.toml

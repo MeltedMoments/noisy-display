@@ -424,6 +424,27 @@ HIGH sensitivity      55 ───────── 80
     - fool around with hotspot on/off
     - accept http input eg GET /api/hello?name=Jennie. Return {"message":"Hello Jennie"}
 
+### eod
+- okay those basic tests work
+- started trying to get wokwi working as well. split secrets into config, with build flag in PIO.ini. But seem to have lost serial output? 
+
+## 20260925
+- new dev board has arrived! It's an official one in an official box. 
+- https://documentation.espressif.com/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
+- got into a mess yesterday, but learnt today 
+    - diff betw [env:xxx] and [xxx]
+    - the former defines a buildable PIO environment
+    - the latter is a named section
+- So it's better to mostly use sections. But realise that overlapping properties can be a problem, so split the responsibility something like:
+
+```
+esp_base       → platform/framework/common serial config
+board_n32r16v  → flash/PSRAM/hardware
+web_server     → source files + ArduinoJson dependency
+wifi_home      → network-selection define
+```
+
+
 
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

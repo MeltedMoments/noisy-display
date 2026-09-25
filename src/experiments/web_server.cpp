@@ -4,15 +4,15 @@
 #include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include "wifi_secrets.h"
+#include "wifi_config.h"
 #include "heartbeat.h"
 
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 2000;
 WebServer server(80);
 
 void begin_wifi() {
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     Serial.println("Waiting for WiFi connection");
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD, 6);
 }
 
 void wifi_station_connected(WiFiEvent_t event, WiFiEventInfo_t info){
