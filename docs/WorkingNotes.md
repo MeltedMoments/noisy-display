@@ -444,7 +444,23 @@ web_server     → source files + ArduinoJson dependency
 wifi_home      → network-selection define
 ```
 
+### notes
+- okay the boards have names now:
+    - wren: is the original board, hooked up to noisy-display
+    - finch: is the new board, available for experiments
+- poss to hook up both to crazycat, makes use of platformio-local.ini (must be specified in the [platformio] section!) to define the ports
 
+- clues on how to define neopixel colours: https://forums.adafruit.com/viewtopic.php?t=80363
+```
+• Red: strip.Color(255, 0, 0) or 0xFF0000
+• Green: strip.Color(0, 255, 0) or 0x00FF00
+• Blue: strip.Color(0, 0, 255) or 0x0000FF
+• Yellow: strip.Color(255, 255, 0) or 0xFFFF00
+• Cyan: strip.Color(0, 255, 255) or 0x00FFFF
+• Purple: strip.Color(255, 0, 255) or 0xFF00FF
+• White: strip.Color(255, 255, 0) or 0xFFFFFF
+• Off (Black): strip.Color(0, 0, 0) or 0x000000
+```
 
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

@@ -1,6 +1,7 @@
 // web_server.cpp
 
 #include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -9,6 +10,22 @@
 
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 2000;
 WebServer server(80);
+bool led_state = false;
+constexpr int ONBOARD_LED = 38;
+
+
+Adafruit_NeoPixel pixel(
+    1, ONBOARD_LED, NEO_GRB + NEO_KHZ800
+);
+
+void set_pixel(bool led_on) {
+    if (led_on) {
+        pixel.setPixelColor(0, pixel.Color(255, 0, 255));
+    } else {
+        pixel.setPixelColor(0, pixel.Color(0, 0, 255));
+    }
+    pixel.show();
+}
 
 void begin_wifi() {
     Serial.println("Waiting for WiFi connection");
@@ -33,6 +50,13 @@ void wifi_disconnected(WiFiEvent_t event, WiFiEventInfo_t info){
     begin_wifi();
 }
 
+void send_json(JsonDocument doc) {
+    String json;
+    serializeJson(doc, json);
+
+    server.send(200, "application/json", json);
+}
+
 void handle_root() {
     Serial.println("GET /");
     server.send(200, "text/plain", "Hello from ESP32");
@@ -51,11 +75,13 @@ void handle_status() {
     doc["rssi"] = WiFi.RSSI();
     doc["ip"] = WiFi.localIP().toString(); 
     doc["auto_reconnect"] = WiFi.getAutoReconnect();
+    doc["led_on"] = led_state; 
 
-    String json;
-    serializeJson(doc, json);
+    send_json(doc);
+    // String json;
+    // serializeJson(doc, json);
 
-    server.send(200, "application/json", json);
+    // server.send(200, "application/json", json);
 }
 
 void handle_hello() {
@@ -72,36 +98,38 @@ void handle_hello() {
     message += name;
     doc["message"] = message;
 
-    String json;
-    serializeJson(doc, json);
+    send_json(doc);
+    // String json;
+    // serializeJson(doc, json);
 
-    server.send(200, "application/json", json);
+    // server.send(200, "application/json", json);
 }
 
+void handle_led() {
+    Serial.println("POST /api/led");
+    String led_arg = "state";
+    String state = "off";
+    if (server.hasArg(led_arg)) {
+        state = server.arg(led_arg);
+    }
+    led_state = (state == "on") ? true : false;
+    set_pixel(led_state);
 
-// void handle_status() {
-//     Serial.println("GET /api/status");
-//     JsonDocument doc;
-//     doc["uptime"] = millis();
-//     doc["db"] = "67.7";
-//     doc["target"] = 4;
-//     doc["display"] = 3;
-//     doc["sensitivity"] = "HIGH";
-//     String json;
-//     serializeJson(doc, json);
-//     server.send(200, "application/json", json);
-// }
+    JsonDocument doc;
+    doc["led_on"] = led_state;
 
-// void handle_status() {
-//     Serial.println("GET /api/status");
-//     String json = "{";
-//     json += "\"uptime\":";
-//     json += millis();
-//     json += ",";
-//     json += "\"message\":\"Hello from ESP32\"";
-//     json += "}";
-//     server.send(200, "application/json", json);
-// }
+    send_json(doc);
+ 
+    // String json;
+    // serializeJson(doc, json);
+
+    // server.send(200, "application/json", json);
+
+    //     case "on": led_state = true;
+    //     case "off": 
+    //     default: led_state = false;
+    // }
+}
 
 void setup_wifi() {
     // Delete old configuration
@@ -120,6 +148,7 @@ void setup_server() {
     server.on("/uptime", handle_uptime);
     server.on("/api/status", handle_status);
     server.on("/api/hello", handle_hello);
+    server.on("/api/led", HTTP_POST, handle_led);
     server.begin();
     Serial.println("Web server started");
 }
@@ -129,6 +158,11 @@ void setup() {
     setup_heartbeat();
     setup_wifi();
     setup_server();
+    pixel.begin();
+    pixel.setBrightness(20);
+    pixel.clear();
+    pixel.show();
+    set_pixel(led_state);
 }
 
 void heartbeat() {
