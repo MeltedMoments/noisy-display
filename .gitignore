@@ -4,6 +4,7 @@
 
 wifi_secrets.h
 wifi_config.h
+platformio-local.ini
 
 # Don't track wokwi.toml as it is generated
 wokwi.toml
