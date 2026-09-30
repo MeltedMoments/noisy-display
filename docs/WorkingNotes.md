@@ -462,6 +462,280 @@ wifi_home      → network-selection define
 • Off (Black): strip.Color(0, 0, 0) or 0x000000
 ```
 
+### eod
+- wren is now running noisy-display again
+- can send finch web-server a POST request to turn the onboard led on/off
+- add naughtily ordered yet more breadboards (from eleshop)
+
+### next time 
+- run web-server on wren, see if finch can request /api/status
+
+## 20260927
+- asked chat to suggest some travel experiments
+```
+Yes. Given Finch + Mac + USB cable only, I’d make the trip mostly about the ESP itself and networking/software rather than peripherals. You can get surprisingly far without attaching a single component.
+
+And since you’ll have Wokwi as well, there’s a nice division: learn/test generic ideas in Wokwi; use Finch when the real hardware or real network matters.
+
+Here are the experiments I’d put on the menu, roughly from small/easy to increasingly interesting.
+
+1. Finish the HTTP server properly. You’re already most of the way there. Add GET /api/status, a POST that changes some internal state, sensible 404 responses, query parameters, and HTTP status codes such as 200/400/404. You could make /api/status report useful real information:
+
+{
+  "name": "finch",
+  "uptime_ms": 123456,
+  "wifi": {
+    "ssid": "hotel-wifi",
+    "rssi": -57,
+    "ip": "192.168.1.42"
+  },
+  "heap": {
+    "free": 342112
+  }
+}
+
+That would teach you quite a lot about designing a tiny API without becoming a project.
+
+2. Make Finch an HTTP client. So far you’ve mostly done:
+
+Mac ──HTTP──> Finch
+
+Turn it around:
+
+Finch ──HTTP──> server
+
+Use HTTPClient to GET a simple public endpoint and inspect the status code, headers and body. Then try JSON and parse the response with ArduinoJson. That introduces a pattern you’ll almost certainly want later.
+
+3. Run both client and server. Finch can happily be both:
+
+                 GET /api/status
+Mac ─────────────────────────────> Finch
+                                     │
+                                     │ GET something
+                                     ▼
+                                  Internet
+
+This starts making the ESP feel less like an Arduino with Wi-Fi glued on and more like a small networked computer.
+
+4. Explore Wi-Fi failure properly. You’ve already started this and it’s particularly suitable while travelling because you’ll encounter different networks anyway. Experiment with connection timeout, disconnect events, reconnect, wrong credentials, network disappearing, network returning, and perhaps falling back from one known SSID to another.
+
+You could give Finch a little connection state machine:
+
+DISCONNECTED
+     ↓
+CONNECTING
+     ↓
+CONNECTED
+     ↓
+LOST
+     ↓
+RECONNECTING
+
+Don’t necessarily build an elaborate framework around it; just observe and understand the behaviour.
+
+5. Multiple known networks. This follows naturally from your home/phone/Wokwi configuration work. Instead of compiling Finch for one network:
+
+HOME
+PHONE
+WOKWI
+
+let the firmware know several networks and choose one that’s available. That begins answering the earlier question of what a real NoisyDisplay should do when moved somewhere else.
+
+6. Wi-Fi scanning. Very small and quite fun:
+
+Finch scans
+   ↓
+HotelWifi       -42 dBm
+JenniesPhone    -61 dBm
+SomebodyElse    -78 dBm
+...
+
+Then experiment with RSSI. Walk Finch around the room and see what happens to signal strength.
+
+That also gives you some real numbers behind the vague Wi-Fi-bars concept.
+
+7. Try mDNS. Instead of remembering:
+
+192.168.1.42
+
+try reaching:
+
+finch.local
+
+That’s a particularly useful little experiment for NoisyDisplay because DHCP addresses change. A human-friendly device name is much nicer than hunting for its IP address.
+
+8. Give Finch a tiny web page. You’ve been returning text and JSON. Return HTML instead:
+
+Finch
+Uptime: 3h 42m
+Wi-Fi: connected
+RSSI: -53 dBm
+Free heap: 351 KB
+
+Don’t turn this into frontend development. 😄 Just hand-write perhaps 15 lines of HTML and serve them.
+
+Then perhaps have that page use JavaScript to fetch /api/status. Suddenly you’ve got:
+
+browser
+   │
+   ├── GET /
+   │       ↓
+   │      HTML
+   │
+   └── GET /api/status
+           ↓
+          JSON
+
+That’s directly relevant to the eventual idea of giving NoisyDisplay — and even MigTool, conceptually — a simple web interface.
+
+9. Server-Sent Events or polling. Once the status page exists, make it update automatically. Start with JavaScript polling:
+
+every 2 sec
+    ↓
+GET /api/status
+    ↓
+update page
+
+That’s very easy and teaches the principle. Later you can investigate pushing updates from ESP → browser.
+
+10. Explore non-volatile storage. Finch has plenty of flash. Learn ESP32 Preferences/NVS:
+
+preferences.putString("name", "Finch");
+
+Reboot:
+
+preferences.getString("name");
+
+Then use the web API to change a value, reboot Finch, and discover that it’s still there.
+
+That’s a useful milestone:
+
+POST setting
+     ↓
+store in NVS
+     ↓
+power off
+     ↓
+power on
+     ↓
+setting survives
+
+Now you’re starting to have an actual configurable appliance.
+
+11. Wi-Fi configuration portal. This is a bigger experiment, but very relevant eventually. If Finch can’t connect to a known Wi-Fi network:
+
+No known Wi-Fi
+      ↓
+Finch creates its own access point
+      ↓
+Mac connects to Finch
+      ↓
+configuration page
+      ↓
+enter SSID/password
+      ↓
+Finch stores credentials
+      ↓
+restart/connect
+
+I wouldn’t start there. But several of the earlier experiments—web server, NVS, scanning, connection state—lead naturally towards it.
+
+12. OTA firmware update. Another very useful ESP trick: upload new firmware over Wi-Fi rather than USB.
+
+That’s probably towards the end of the holiday menu, because you want to understand what you’re doing before deliberately teaching Finch to rewrite its own firmware. But it’s a nice goal:
+
+pio run -t upload
+        │
+       Wi-Fi
+        │
+        ▼
+      Finch
+
+No USB upload cable required except for recovery.
+
+And there are a few hardware-free ESP experiments that aren’t networking at all: timers, FreeRTOS tasks, queues, watchdog behaviour, PSRAM allocation, measuring heap fragmentation, deep sleep/wakeup timers, and examining what survives different kinds of reset. Those are useful, but I wouldn’t rush into FreeRTOS just because it’s there.
+
+What I’d actually take with me
+
+I’d resist packing a travelling electronics laboratory. Your proposed kit sounds just right:
+
+Finch
+USB cable
+travel Mac
+breadboard purely as physical protection
+
+You don’t even really need the breadboard electrically.
+
+Finch itself already gives you:
+
+Wi-Fi
+Bluetooth
+RGB LED
+32 MB flash
+16 MB PSRAM
+timers
+NVS
+USB/UART
+two CPU cores
+
+That’s an enormous playground without a jumper wire in sight.
+
+A nice loose progression
+
+If you feel like programming while away, I’d roughly wander through:
+
+HTTP server          ← you're here
+     ↓
+POST + state changes
+     ↓
+better /api/status
+     ↓
+mDNS (finch.local)
+     ↓
+tiny HTML status page
+     ↓
+page fetches JSON
+     ↓
+HTTP client
+     ↓
+Wi-Fi scanning/reconnection
+     ↓
+NVS/preferences
+     ↓
+configuration survives reboot
+     ↓
+perhaps configuration portal
+
+None of those needs to become part of NoisyDisplay. Keep experiments/ exactly for this purpose. If you get bored halfway through one, abandon it.
+
+And I’d definitely keep Wokwi Wi-Fi as a separate unfinished problem, rather than making it a prerequisite. Finch is now known-good, portable between both Macs, and can connect to real Wi-Fi. You don’t need to spend your holiday debugging a simulator in order to learn ESP networking.
+```
+
+## 20260928
+- installing docs on travelcat (see embedded/offline-docs)
+- $ brew install ripgrep
+
+```
+cd offline-docs/
+rg "onNotFound" arduino-esp32/
+rg "HTTPClient" arduino-esp32/libraries/
+rg "Preferences" arduino-esp32/libraries/
+
+rg "class WebServer" ~/.platformio/packages/framework-arduinoespressif32/
+
+# case-insensitive
+rg -i "webserver"
+
+# only C++ headers
+rg "HTTPClient" -g "*.h"
+
+# line numbers are normally shown automatically
+rg "onNotFound" arduino-esp32/
+
+# list matching filenames rather than matching text
+rg -l "Preferences" arduino-esp32/
+```
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===

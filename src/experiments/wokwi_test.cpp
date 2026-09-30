@@ -1,4 +1,4 @@
-// wifi_test.cpp
+// wokwi_test.cpp
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -12,7 +12,8 @@ unsigned long last_connection_time = 0;
 
 void setup_wifi() {
     Serial.printf("Connecting ");
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    WiFi.begin("Wokwi-GUEST", "", 6);
 
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -29,6 +30,7 @@ void setup() {
     Serial.begin(115200);
     delay(1000);
 
+    Serial.println("Wokwi Test");
     setup_wifi();
     setup_heartbeat();
 }
@@ -53,7 +55,6 @@ void check_connection() {
     }
     last_connection_time = now;
 }
-
 
 void loop() {
     heartbeat();

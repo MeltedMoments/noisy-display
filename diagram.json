@@ -14,21 +14,9 @@
         "psramSize": "8",
         "psramType": "octal"
       }    
-    },
-    {
-      "type": "wokwi-led-strip",
-      "id": "strip",
-      "top": 0,
-      "left": 250,
-      "attrs": {
-        "pixels": "8"
-      }    
     }
   ],
   "connections": [
-    [ "esp:4", "strip:DIN", "green", [ "h0" ] ],
-    [ "esp:5V", "strip:VCC", "red", [ "h0" ] ],
-    [ "esp:GND.1", "strip:GND", "black", [ "h0" ] ]
   ],
   "serialMonitor": {
     "display": "always"
