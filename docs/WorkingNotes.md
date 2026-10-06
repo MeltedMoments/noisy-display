@@ -765,6 +765,7 @@ uint32_t      long double
 uint64_t
 ```
 
+- verbose build: $ pio run -e web_client_swift -v
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
