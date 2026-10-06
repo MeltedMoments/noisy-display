@@ -13,6 +13,9 @@ WebServer server(80);
 bool led_state = false;
 constexpr int ONBOARD_LED = 38;
 
+const char* board_name() {
+    return BOARD_NAME;
+}
 
 Adafruit_NeoPixel pixel(
     1, ONBOARD_LED, NEO_GRB + NEO_KHZ800
@@ -27,8 +30,12 @@ void set_pixel(bool led_on) {
     pixel.show();
 }
 
+
+
 void begin_wifi() {
     Serial.println("Waiting for WiFi connection");
+    Serial.printf("Connecting to ");
+    Serial.println(WIFI_SSID);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD, 6);
 }
 
@@ -70,6 +77,7 @@ void handle_uptime() {
 void handle_status() {
     Serial.println("GET /api/status");
     JsonDocument doc;
+    doc["board"] = board_name();
     doc["uptime_ms"] = millis();
     doc["wifi_connected"] = WiFi.isConnected();
     doc["rssi"] = WiFi.RSSI();

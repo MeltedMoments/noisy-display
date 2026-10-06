@@ -447,7 +447,7 @@ wifi_home      → network-selection define
 ### notes
 - okay the boards have names now:
     - wren: is the original board, hooked up to noisy-display
-    - finch: is the new board, available for experiments
+    - swift: is the new board, available for experiments
 - poss to hook up both to crazycat, makes use of platformio-local.ini (must be specified in the [platformio] section!) to define the ports
 
 - clues on how to define neopixel colours: https://forums.adafruit.com/viewtopic.php?t=80363
@@ -464,25 +464,27 @@ wifi_home      → network-selection define
 
 ### eod
 - wren is now running noisy-display again
-- can send finch web-server a POST request to turn the onboard led on/off
+- can send swift web-server a POST request to turn the onboard led on/off
+```curl -X POST "http://192.168.2.48/api/led?state=on"```
 - add naughtily ordered yet more breadboards (from eleshop)
 
+
 ### next time 
-- run web-server on wren, see if finch can request /api/status
+- run web-server on wren, see if swift can request /api/status
 
 ## 20260927
 - asked chat to suggest some travel experiments
 ```
-Yes. Given Finch + Mac + USB cable only, I’d make the trip mostly about the ESP itself and networking/software rather than peripherals. You can get surprisingly far without attaching a single component.
+Yes. Given Swift + Mac + USB cable only, I’d make the trip mostly about the ESP itself and networking/software rather than peripherals. You can get surprisingly far without attaching a single component.
 
-And since you’ll have Wokwi as well, there’s a nice division: learn/test generic ideas in Wokwi; use Finch when the real hardware or real network matters.
+And since you’ll have Wokwi as well, there’s a nice division: learn/test generic ideas in Wokwi; use Swift when the real hardware or real network matters.
 
 Here are the experiments I’d put on the menu, roughly from small/easy to increasingly interesting.
 
 1. Finish the HTTP server properly. You’re already most of the way there. Add GET /api/status, a POST that changes some internal state, sensible 404 responses, query parameters, and HTTP status codes such as 200/400/404. You could make /api/status report useful real information:
 
 {
-  "name": "finch",
+  "name": "swift",
   "uptime_ms": 123456,
   "wifi": {
     "ssid": "hotel-wifi",
@@ -496,20 +498,20 @@ Here are the experiments I’d put on the menu, roughly from small/easy to incre
 
 That would teach you quite a lot about designing a tiny API without becoming a project.
 
-2. Make Finch an HTTP client. So far you’ve mostly done:
+2. Make Swift an HTTP client. So far you’ve mostly done:
 
-Mac ──HTTP──> Finch
+Mac ──HTTP──> Swift
 
 Turn it around:
 
-Finch ──HTTP──> server
+Swift ──HTTP──> server
 
 Use HTTPClient to GET a simple public endpoint and inspect the status code, headers and body. Then try JSON and parse the response with ArduinoJson. That introduces a pattern you’ll almost certainly want later.
 
-3. Run both client and server. Finch can happily be both:
+3. Run both client and server. Swift can happily be both:
 
                  GET /api/status
-Mac ─────────────────────────────> Finch
+Mac ─────────────────────────────> Swift
                                      │
                                      │ GET something
                                      ▼
@@ -519,7 +521,7 @@ This starts making the ESP feel less like an Arduino with Wi-Fi glued on and mor
 
 4. Explore Wi-Fi failure properly. You’ve already started this and it’s particularly suitable while travelling because you’ll encounter different networks anyway. Experiment with connection timeout, disconnect events, reconnect, wrong credentials, network disappearing, network returning, and perhaps falling back from one known SSID to another.
 
-You could give Finch a little connection state machine:
+You could give Swift a little connection state machine:
 
 DISCONNECTED
      ↓
@@ -533,7 +535,7 @@ RECONNECTING
 
 Don’t necessarily build an elaborate framework around it; just observe and understand the behaviour.
 
-5. Multiple known networks. This follows naturally from your home/phone/Wokwi configuration work. Instead of compiling Finch for one network:
+5. Multiple known networks. This follows naturally from your home/phone/Wokwi configuration work. Instead of compiling Swift for one network:
 
 HOME
 PHONE
@@ -543,14 +545,14 @@ let the firmware know several networks and choose one that’s available. That b
 
 6. Wi-Fi scanning. Very small and quite fun:
 
-Finch scans
+Swift scans
    ↓
 HotelWifi       -42 dBm
 JenniesPhone    -61 dBm
 SomebodyElse    -78 dBm
 ...
 
-Then experiment with RSSI. Walk Finch around the room and see what happens to signal strength.
+Then experiment with RSSI. Walk Swift around the room and see what happens to signal strength.
 
 That also gives you some real numbers behind the vague Wi-Fi-bars concept.
 
@@ -560,13 +562,13 @@ That also gives you some real numbers behind the vague Wi-Fi-bars concept.
 
 try reaching:
 
-finch.local
+swift.local
 
 That’s a particularly useful little experiment for NoisyDisplay because DHCP addresses change. A human-friendly device name is much nicer than hunting for its IP address.
 
-8. Give Finch a tiny web page. You’ve been returning text and JSON. Return HTML instead:
+8. Give Swift a tiny web page. You’ve been returning text and JSON. Return HTML instead:
 
-Finch
+Swift
 Uptime: 3h 42m
 Wi-Fi: connected
 RSSI: -53 dBm
@@ -598,15 +600,15 @@ update page
 
 That’s very easy and teaches the principle. Later you can investigate pushing updates from ESP → browser.
 
-10. Explore non-volatile storage. Finch has plenty of flash. Learn ESP32 Preferences/NVS:
+10. Explore non-volatile storage. Swift has plenty of flash. Learn ESP32 Preferences/NVS:
 
-preferences.putString("name", "Finch");
+preferences.putString("name", "Swift");
 
 Reboot:
 
 preferences.getString("name");
 
-Then use the web API to change a value, reboot Finch, and discover that it’s still there.
+Then use the web API to change a value, reboot Swift, and discover that it’s still there.
 
 That’s a useful milestone:
 
@@ -622,19 +624,19 @@ setting survives
 
 Now you’re starting to have an actual configurable appliance.
 
-11. Wi-Fi configuration portal. This is a bigger experiment, but very relevant eventually. If Finch can’t connect to a known Wi-Fi network:
+11. Wi-Fi configuration portal. This is a bigger experiment, but very relevant eventually. If Swift can’t connect to a known Wi-Fi network:
 
 No known Wi-Fi
       ↓
-Finch creates its own access point
+Swift creates its own access point
       ↓
-Mac connects to Finch
+Mac connects to Swift
       ↓
 configuration page
       ↓
 enter SSID/password
       ↓
-Finch stores credentials
+Swift stores credentials
       ↓
 restart/connect
 
@@ -642,14 +644,14 @@ I wouldn’t start there. But several of the earlier experiments—web server, N
 
 12. OTA firmware update. Another very useful ESP trick: upload new firmware over Wi-Fi rather than USB.
 
-That’s probably towards the end of the holiday menu, because you want to understand what you’re doing before deliberately teaching Finch to rewrite its own firmware. But it’s a nice goal:
+That’s probably towards the end of the holiday menu, because you want to understand what you’re doing before deliberately teaching Swift to rewrite its own firmware. But it’s a nice goal:
 
 pio run -t upload
         │
        Wi-Fi
         │
         ▼
-      Finch
+      Swift
 
 No USB upload cable required except for recovery.
 
@@ -659,14 +661,14 @@ What I’d actually take with me
 
 I’d resist packing a travelling electronics laboratory. Your proposed kit sounds just right:
 
-Finch
+Swift
 USB cable
 travel Mac
 breadboard purely as physical protection
 
 You don’t even really need the breadboard electrically.
 
-Finch itself already gives you:
+Swift itself already gives you:
 
 Wi-Fi
 Bluetooth
@@ -690,7 +692,7 @@ POST + state changes
      ↓
 better /api/status
      ↓
-mDNS (finch.local)
+mDNS (swift.local)
      ↓
 tiny HTML status page
      ↓
@@ -708,7 +710,7 @@ perhaps configuration portal
 
 None of those needs to become part of NoisyDisplay. Keep experiments/ exactly for this purpose. If you get bored halfway through one, abandon it.
 
-And I’d definitely keep Wokwi Wi-Fi as a separate unfinished problem, rather than making it a prerequisite. Finch is now known-good, portable between both Macs, and can connect to real Wi-Fi. You don’t need to spend your holiday debugging a simulator in order to learn ESP networking.
+And I’d definitely keep Wokwi Wi-Fi as a separate unfinished problem, rather than making it a prerequisite. Swift is now known-good, portable between both Macs, and can connect to real Wi-Fi. You don’t need to spend your holiday debugging a simulator in order to learn ESP networking.
 ```
 
 ## 20260928
@@ -736,12 +738,39 @@ rg "onNotFound" arduino-esp32/
 rg -l "Preferences" arduino-esp32/
 ```
 
+## 20260930
+- got wokwi serial sorted out, it needs usb_native for the serial monitor
+
+## 20261006
+- flight to bangkok cancelled, hanging around until Thurs, so a bit of time to play with this
+
+### notes
+- wokwi web server
+    - wokwi.toml (wokwi-build) 
+    ```
+    [[net.forward]]
+    from = "localhost:8180"
+    to = "target:80"
+    ```
+    - connect to Wokwi-GUEST
+    - THEN, http://localhost:8180/api/status
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 
+## Useful links
+- Table generator: https://tabletomarkdown.com/generate-markdown-table/
+- Markdown tree structure: https://devtool.tech/en/tree
+
+- Arduino LangRef: https://docs.arduino.cc/language-reference/
+- Espressif ESP-32: https://docs.espressif.com/projects/arduino-esp32/en/latest/index.html
+- PlatformIO: https://docs.platformio.org/en/latest/ 
+- Wokwi: https://docs.wokwi.com/
+
+- ArduinoJson: https://arduinojson.org
 
 ## Things learned / reminders
 
