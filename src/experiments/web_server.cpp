@@ -17,7 +17,6 @@ const char* board_name() {
     return BOARD_NAME;
 }
 
-
 Adafruit_NeoPixel pixel(
     1, ONBOARD_LED, NEO_GRB + NEO_KHZ800
 );
@@ -30,8 +29,6 @@ void set_pixel(bool led_on) {
     }
     pixel.show();
 }
-
-
 
 void begin_wifi() {
     Serial.println("Waiting for WiFi connection");
@@ -65,6 +62,38 @@ void send_json(JsonDocument doc) {
     server.send(200, "application/json", json);
 }
 
+void handle_not_found() {
+    String message = "Request Not Found\n\n";
+    message += "URI: ";
+    message += server.uri();
+    message += "\nMethod: ";
+    message += (server.method() == HTTP_GET) ? "GET" : "POST";
+    message += "\nArguments: ";
+    message += server.args();
+    message += "\n";
+    for (int i = 0; i < server.args(); i++) {
+        message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+    }
+    server.send(404, "text/plain", message);
+}
+
+void handle_bad_request(String msg) {
+    String message = "Bad Request\n\n";
+    message += "URI: ";
+    message += server.uri();
+    message += "\nMethod: ";
+    message += (server.method() == HTTP_GET) ? "GET" : "POST";
+    message += "\nError: ";
+    message += msg;
+    message += "\nArguments: ";
+    message += server.args();
+    message += "\n";
+    for (int i = 0; i < server.args(); i++) {
+        message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+    }
+    server.send(400, "text/plain", message);
+}
+
 void handle_root() {
     Serial.println("GET /");
     server.send(200, "text/plain", "Hello from ESP32");
@@ -73,15 +102,6 @@ void handle_root() {
 void handle_uptime() {
     Serial.println("GET /uptime");
     server.send(200, "text/plain", String(millis()));
-}
-
-double free_memory_mb() {
-    Serial.printf(
-        "Flash:  %u bytes (%1.f MB)\n",
-        ESP.getFlashChipSize(),
-        ESP.getFlashChipSize() / 1024.0 / 1024.0
-    );
-    return ESP.getFlashChipSize() / 1024.0 / 1024.0;
 }
 
 void handle_status() {
@@ -128,10 +148,12 @@ void handle_hello() {
 void handle_led() {
     Serial.println("POST /api/led");
     String led_arg = "state";
-    String state = "off";
-    if (server.hasArg(led_arg)) {
-        state = server.arg(led_arg);
+    if (! server.hasArg(led_arg)) {
+        handle_bad_request("missing parameter: 'state'");
+        return;
     }
+
+    String state = server.arg(led_arg);
     led_state = (state == "on") ? true : false;
     set_pixel(led_state);
 
@@ -154,11 +176,12 @@ void setup_wifi() {
 }
 
 void setup_server() {
-    server.on("/", handle_root);
-    server.on("/uptime", handle_uptime);
-    server.on("/api/status", handle_status);
-    server.on("/api/hello", handle_hello);
+    server.on("/", HTTP_GET, handle_root);
+    server.on("/uptime", HTTP_GET, handle_uptime);
+    server.on("/api/status", HTTP_GET, handle_status);
+    server.on("/api/hello", HTTP_GET, handle_hello);
     server.on("/api/led", HTTP_POST, handle_led);
+    server.onNotFound(handle_not_found);
     server.begin();
     Serial.println("Web server started");
 }
