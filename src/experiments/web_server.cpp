@@ -17,6 +17,7 @@ const char* board_name() {
     return BOARD_NAME;
 }
 
+
 Adafruit_NeoPixel pixel(
     1, ONBOARD_LED, NEO_GRB + NEO_KHZ800
 );
@@ -59,7 +60,7 @@ void wifi_disconnected(WiFiEvent_t event, WiFiEventInfo_t info){
 
 void send_json(JsonDocument doc) {
     String json;
-    serializeJson(doc, json);
+    serializeJsonPretty(doc, json);
 
     server.send(200, "application/json", json);
 }
@@ -74,22 +75,37 @@ void handle_uptime() {
     server.send(200, "text/plain", String(millis()));
 }
 
+double free_memory_mb() {
+    Serial.printf(
+        "Flash:  %u bytes (%1.f MB)\n",
+        ESP.getFlashChipSize(),
+        ESP.getFlashChipSize() / 1024.0 / 1024.0
+    );
+    return ESP.getFlashChipSize() / 1024.0 / 1024.0;
+}
+
 void handle_status() {
     Serial.println("GET /api/status");
     JsonDocument doc;
     doc["board"] = board_name();
     doc["uptime_ms"] = millis();
-    doc["wifi_connected"] = WiFi.isConnected();
-    doc["rssi"] = WiFi.RSSI();
-    doc["ip"] = WiFi.localIP().toString(); 
-    doc["auto_reconnect"] = WiFi.getAutoReconnect();
+
+    JsonObject wifi = doc["wifi"].to<JsonObject>();
+    wifi["wifi_connected"] = WiFi.isConnected();
+    wifi["ssid"] = WiFi.SSID();
+    wifi["rssi"] = WiFi.RSSI();
+    wifi["ip"] = WiFi.localIP().toString(); 
+    wifi["auto_reconnect"] = WiFi.getAutoReconnect();
+
+    uint64_t bytes = ESP.getFlashChipSize();
+    JsonObject heap = doc["heap"].to<JsonObject>();
+    heap["free_bytes"] = bytes;
+    heap["free_mb"] = bytes / 1024.0 / 1024.0;
+
     doc["led_on"] = led_state; 
 
+    doc.shrinkToFit();
     send_json(doc);
-    // String json;
-    // serializeJson(doc, json);
-
-    // server.send(200, "application/json", json);
 }
 
 void handle_hello() {
@@ -107,10 +123,6 @@ void handle_hello() {
     doc["message"] = message;
 
     send_json(doc);
-    // String json;
-    // serializeJson(doc, json);
-
-    // server.send(200, "application/json", json);
 }
 
 void handle_led() {
@@ -127,16 +139,6 @@ void handle_led() {
     doc["led_on"] = led_state;
 
     send_json(doc);
- 
-    // String json;
-    // serializeJson(doc, json);
-
-    // server.send(200, "application/json", json);
-
-    //     case "on": led_state = true;
-    //     case "off": 
-    //     default: led_state = false;
-    // }
 }
 
 void setup_wifi() {

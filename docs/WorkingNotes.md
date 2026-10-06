@@ -755,6 +755,16 @@ rg -l "Preferences" arduino-esp32/
     - connect to Wokwi-GUEST
     - THEN, http://localhost:8180/api/status
 
+- C types are a zoo, for embedded: [noisydisplay 17/9 11:40]
+```
+INTEGER       FLOATING POINT
+
+int32_t       float
+int64_t       double
+uint32_t      long double
+uint64_t
+```
+
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
 # ===> I AM HERE MARKER HERE AM I <===
